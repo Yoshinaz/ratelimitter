@@ -13,12 +13,13 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @ThreadSafe
 public class SlidingWindowRateLimit implements RateLimiter{
     private static final Logger LOG = LoggerFactory.getLogger(SlidingWindowRateLimit.class);
 
-    private final Map<String,Boolean> isPausing;
+    private final Map<String, AtomicBoolean> isPausing;
     private final Map<String,LimitRule> rules;
     private final TimeSupplier timeSupplier;
     private final ConcurrentMap<String,ConcurrentMap<Long,Long>> requests;
@@ -30,14 +31,14 @@ public class SlidingWindowRateLimit implements RateLimiter{
         this.requests = new ConcurrentHashMap<>();
         this.isPausing = new HashMap<>();
         for (Map.Entry<String,LimitRule> r : rules.entrySet()) {
-            isPausing.put(r.getKey(),false);
+            isPausing.put(r.getKey(),new AtomicBoolean(false));
         }
     }
 
     @Override
     public boolean isOverLimit(String key) {
 
-        if(isPausing.get(key)){
+        if(isPausing.get(key).get()){
             System.out.println(key+":pausing");
             return true;
         }
@@ -72,10 +73,16 @@ public class SlidingWindowRateLimit implements RateLimiter{
     }
 
     private void overLimitHandler(String key){
-        isPausing.put(key,true);
-        final LimitRule rule = rules.get(key);
-        ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
-        service.schedule(new ServiceAvailableTask(isPausing,key),rule.getStopDurationSeconds(), TimeUnit.SECONDS);
+        AtomicBoolean isPause = isPausing.get(key);
+        boolean isPauseBool = isPause.getAndSet(true);
+
+        if (!isPauseBool) {
+            isPausing.put(key,new AtomicBoolean(true));
+            final LimitRule rule = rules.get(key);
+            ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
+            service.schedule(new ServiceAvailableTask(isPausing,key),rule.getStopDurationSeconds(), TimeUnit.SECONDS);
+        }
+
     }
 
     private long getCurrentWindows(String key,long startTime){
