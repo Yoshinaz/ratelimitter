@@ -1,0 +1,42 @@
+{
+  "Hotels": [
+    {
+      "key": "city",
+      "duration_sec":5,
+      "limit": 10,
+      "pause_sec": 5
+    },
+   {
+      "key": "room",
+      "duration_sec":10,
+      "limit": 100,
+      "pause_sec": 5
+    },
+     {
+       "key": "default",
+      "duration_sec":10,
+      "limit": 50,
+      "pause_sec": 5
+    }
+    ],
+  "Test": [
+    {
+      "key": "t1",
+      "duration_sec":5,
+      "limit": 10,
+      "pause_sec": 5
+    },
+    {
+      "key": "t2",
+      "duration_sec":10,
+      "limit": 100,
+      "pause_sec": 5
+    },
+    {
+      "key": "default",
+      "duration_sec":10,
+      "limit": 50,
+      "pause_sec": 5
+    }
+  ]
+}

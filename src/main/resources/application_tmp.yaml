@@ -1,0 +1,35 @@
+ratelimit:
+  tests: xxxxx
+  rates:
+    hotels:
+      -
+        key:  city
+        duration_sec: 5
+        limit: 10
+        pause_sec: 5
+      -
+        key: room
+        duration_sec: 10
+        limit: 100
+        pause_sec: 5
+      -
+        key: default
+        duration_sec: 10
+        limit: 50
+        pause_sec: 5
+    api2:
+      -
+        key: k1
+        duration_sec: 5
+        limit: 10
+        pause_sec: 5
+      -
+        key: k2
+        duration_sec: 10
+        limit: 100
+        pause_sec: 5
+      -
+        key: default
+        duration_sec: 10
+        limit: 50
+        pause_sec: 5
