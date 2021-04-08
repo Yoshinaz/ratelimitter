@@ -1,6 +1,5 @@
 package com.agoda.rate.service;
 
-import com.agoda.rate.dto.HotelDto;
 import com.agoda.rate.entity.Hotel;
 
 import java.util.List;

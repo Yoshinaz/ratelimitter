@@ -2,7 +2,8 @@ package com.agoda.rate.controller;
 
 import com.agoda.rate.config.RateLimitConfig;
 import com.agoda.rate.constant.RateConstants;
-import com.agoda.rate.dto.HotelDto;
+
+import com.agoda.rate.entity.Hotel;
 import com.agoda.rate.service.HotelService;
 import com.agoda.rate.utils.limitter.LimitRule;
 import com.agoda.rate.utils.limitter.RateLimiter;
@@ -52,7 +53,7 @@ public class HotelController {
     }
 
     @Operation(summary = "Get hotels by city")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = HotelDto.class))}),
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = Hotel.class))}),
             @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)})
     @GetMapping(path = "/city/{city}")
     public ResponseEntity<List<com.agoda.rate.entity.Hotel>> loadCity(@PathVariable(value = "city") String city) {
@@ -68,7 +69,7 @@ public class HotelController {
     }
 
     @Operation(summary = "Get hotels by city")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = HotelDto.class))}),
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = Hotel.class))}),
             @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)})
     @GetMapping(path = "/room/{room}")
     public ResponseEntity<List<com.agoda.rate.entity.Hotel>> loadRoom(@PathVariable(value = "room") String room) {
@@ -84,7 +85,7 @@ public class HotelController {
     }
 
     @Operation(summary = "Get hotels by city for test")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = HotelDto.class))}),
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = Hotel.class))}),
             @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)})
     @GetMapping(path = "/city2/{city}")
     public ResponseEntity<List<com.agoda.rate.entity.Hotel>> loadCity2(@PathVariable(value = "city") String city) {
@@ -100,7 +101,7 @@ public class HotelController {
     }
 
     @Operation(summary = "Get hotels by city for test")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = HotelDto.class))}),
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = Hotel.class))}),
             @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)})
     @GetMapping(path = "/city3/{city}")
     public ResponseEntity<List<com.agoda.rate.entity.Hotel>> loadCity3(@PathVariable(value = "city") String city) {
