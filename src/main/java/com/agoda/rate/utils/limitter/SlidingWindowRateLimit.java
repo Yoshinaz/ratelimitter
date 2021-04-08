@@ -1,6 +1,7 @@
 package com.agoda.rate.utils.limitter;
 
 import com.agoda.rate.config.RateLimitConfig;
+import com.agoda.rate.constant.RateConstants;
 import com.agoda.rate.utils.time.SystemTimeSupplier;
 import com.agoda.rate.utils.time.TimeSupplier;
 import org.slf4j.Logger;
@@ -37,8 +38,8 @@ public class SlidingWindowRateLimit implements RateLimiter{
 
     @Override
     public boolean isOverLimit(String key) {
-
-        if(isPausing.get(key).get()){
+        AtomicBoolean isPause = isPausing.get(key);
+        if(isPause != null && isPause.get()){
             System.out.println(key+":pausing");
             return true;
         }
@@ -64,20 +65,18 @@ public class SlidingWindowRateLimit implements RateLimiter{
         if(rule == null){
             rule = defaultConfig();
             rules.put(key,rule);
+            isPausing.put(key,new AtomicBoolean(false));
         }
         return rule;
     }
 
     private LimitRule defaultConfig(){
-        return LimitRule.of(Duration.ofSeconds(10),50,Duration.ofSeconds(5));
+        return rules.get(RateConstants.Default.toString());
     }
 
     private void overLimitHandler(String key){
-        AtomicBoolean isPause = isPausing.get(key);
-        boolean isPauseBool = isPause.getAndSet(true);
-
-        if (!isPauseBool) {
-            isPausing.put(key,new AtomicBoolean(true));
+        if (isPausing.get(key).compareAndSet(false,true)) {
+            //isPausing.put(key,new AtomicBoolean(true));
             final LimitRule rule = rules.get(key);
             ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
             service.schedule(new ServiceAvailableTask(isPausing,key),rule.getStopDurationSeconds(), TimeUnit.SECONDS);
@@ -95,7 +94,7 @@ public class SlidingWindowRateLimit implements RateLimiter{
             if(r.getKey()>startTime){
                 totalRequest+=r.getValue();
             }else{
-                System.out.println("remove:"+r.getKey());
+                //System.out.println("remove:"+r.getKey());
                 requests.remove(r.getKey());
             }
         }

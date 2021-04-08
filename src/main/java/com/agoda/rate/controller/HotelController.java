@@ -1,8 +1,8 @@
 package com.agoda.rate.controller;
 
 import com.agoda.rate.config.RateLimitConfig;
+import com.agoda.rate.constant.RateConstants;
 import com.agoda.rate.dto.HotelDto;
-import com.agoda.rate.entity.Hotel;
 import com.agoda.rate.service.HotelService;
 import com.agoda.rate.utils.limitter.LimitRule;
 import com.agoda.rate.utils.limitter.RateLimiter;
@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +40,7 @@ public class HotelController {
     public HotelController(HotelService hotelService,RateLimitConfig limitConfig) {
         this.hotelService = hotelService;
 
-        Map<String, LimitRule> rules = limitConfig.getRateConfig("hotels");//loadRateLimit();
+        Map<String, LimitRule> rules = limitConfig.getRateConfig(RateConstants.HotelControl.toString());//loadRateLimit();
         this.rateLimit = new SlidingWindowRateLimit(rules);
     }
 
@@ -56,11 +55,11 @@ public class HotelController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = HotelDto.class))}),
             @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)})
     @GetMapping(path = "/city/{city}")
-    public ResponseEntity<List<Hotel>> loadCity(@PathVariable(value = "city") String city) {
-        if(rateLimit.isOverLimit("city")){
+    public ResponseEntity<List<com.agoda.rate.entity.Hotel>> loadCity(@PathVariable(value = "city") String city) {
+        if(rateLimit.isOverLimit(RateConstants.Hotel.City.toString())){
             return ResponseEntity.status(429).build();
         }else {
-            final List<Hotel> hotels = hotelService.loadCity(city);
+            final List<com.agoda.rate.entity.Hotel> hotels = hotelService.loadCity(city);
             if (hotels.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
@@ -72,15 +71,48 @@ public class HotelController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = HotelDto.class))}),
             @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)})
     @GetMapping(path = "/room/{room}")
-    public ResponseEntity<List<Hotel>> loadRoom(@PathVariable(value = "room") String room) {
-        if(rateLimit.isOverLimit("room")){
+    public ResponseEntity<List<com.agoda.rate.entity.Hotel>> loadRoom(@PathVariable(value = "room") String room) {
+        if(rateLimit.isOverLimit(RateConstants.Hotel.Room.toString())){
             return ResponseEntity.status(429).build();
         }else {
-            final List<Hotel> hotels = hotelService.loadRoom(room);
+            final List<com.agoda.rate.entity.Hotel> hotels = hotelService.loadRoom(room);
             if (hotels.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok(hotels);
         }
     }
+
+    @Operation(summary = "Get hotels by city for test")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = HotelDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)})
+    @GetMapping(path = "/city2/{city}")
+    public ResponseEntity<List<com.agoda.rate.entity.Hotel>> loadCity2(@PathVariable(value = "city") String city) {
+        if(rateLimit.isOverLimit("city2")){
+            return ResponseEntity.status(429).build();
+        }else {
+            final List<com.agoda.rate.entity.Hotel> hotels = hotelService.loadCity(city);
+            if (hotels.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(hotels);
+        }
+    }
+
+    @Operation(summary = "Get hotels by city for test")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Found the order", content = {@Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = HotelDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Order not found", content = @Content)})
+    @GetMapping(path = "/city3/{city}")
+    public ResponseEntity<List<com.agoda.rate.entity.Hotel>> loadCity3(@PathVariable(value = "city") String city) {
+        if(rateLimit.isOverLimit("city3")){
+            return ResponseEntity.status(429).build();
+        }else {
+            final List<com.agoda.rate.entity.Hotel> hotels = hotelService.loadCity(city);
+            if (hotels.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(hotels);
+        }
+    }
+
 }

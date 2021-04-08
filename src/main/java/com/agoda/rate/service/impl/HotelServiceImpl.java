@@ -18,14 +18,10 @@ public class HotelServiceImpl implements HotelService {
     HotelRepository hotelRepository;
 
     public List<Hotel> loadCity(String city){
-//        HotelDto test = new HotelDto();
-//        test.setCity(city);
         return hotelRepository.findByCity(city);
     }
 
     public List<Hotel> loadRoom(String room){
-        HotelDto test = new HotelDto();
-        test.setRoom(room);
         return hotelRepository.findByRoom(room);
     }
 }
