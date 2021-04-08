@@ -46,7 +46,7 @@ public class SlidingWindowRateLimit implements RateLimiter{
         final long startTime = currentTime - rule.getDurationSeconds();
         final long nRequests = getCurrentWindows(key,startTime);
 
-        if(nRequests > rule.getLimit()){
+        if(nRequests+1 > rule.getLimit()){
             System.out.println("over:"+nRequests);
             overLimitHandler(key);
 
